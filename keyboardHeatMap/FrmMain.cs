@@ -8,19 +8,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using keyboardHeatMap.Capture;
+using keyboardHeatMap.IO;
+using WindowsInput.Events;
 
 namespace keyboardHeatMap
 {
     public partial class FrmMain : Form
     {
         private bool allowFormClosing = false;
+        private bool capturing => keyboardCapture.IsCapturing;
         private IKeyboardCapture keyboardCapture;
         public bool Hidden { get; set; }
         public FrmMain()
         {
             InitializeComponent();
             notifyIcon.Visible = true;
-            keyboardCapture.Start();
+            keyboardCapture = new KeyboardCapture();
         }
 
         private void ActivateForm()
@@ -54,7 +57,6 @@ namespace keyboardHeatMap
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            keyboardCapture.Stop();
             AllowFormClosing();
             this.Close();
         }
@@ -66,7 +68,12 @@ namespace keyboardHeatMap
 
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (allowFormClosing) return;
+            if (allowFormClosing)
+            {
+                if(capturing)
+                    btnCapture_Click(null, null);
+                return;
+            }
             allowFormClosing = false;
             e.Cancel = true;
             HideForm();
@@ -76,6 +83,58 @@ namespace keyboardHeatMap
         {
             notifyIcon.BalloonTipText = "Keyboard Heatmap is running ...";
             notifyIcon.ShowBalloonTip(300);
+        }
+
+        private void btnCapture_Click(object sender, EventArgs e)
+        {
+            if (!capturing)
+            {
+                lblStatus.Text = "Capturing ...";
+                btnCapture.Text = "Stop";
+                btnSaveToFile.Enabled = false;
+                grdResults.Rows.Clear();
+                keyboardCapture.Start();
+            }
+            else
+            {
+                lblStatus.Text = "Results";
+                btnCapture.Text = "Start";
+                btnSaveToFile.Enabled = true;
+                SuspendLayout();
+                grdResults.Rows.Add("TotalClicks", keyboardCapture.Results().TotalClicks());
+                foreach (var res in keyboardCapture.Results().Results())
+                    grdResults.Rows.Add(res.Key, res.Value);
+                grdResults.Sort(grdResults.Columns[1], ListSortDirection.Descending);
+                ResumeLayout();
+            }
+        }
+
+        private void btnSaveToFile_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if(saveFileDialog.ShowDialog() != DialogResult.OK)
+                    return;
+                IWriter writer = new FileWriter(saveFileDialog.FileName);
+
+                writer.AddLine("Key,Count");
+                writer.AddLine($"TotalClicks,{keyboardCapture.Results().TotalClicks()}");
+
+                var result = keyboardCapture.Results().Results();
+                List<KeyValuePair<KeyCode, int>> lst = result.ToList();
+                lst.Sort((a, b) => a.Value.CompareTo(b.Value));
+
+                for(int i=lst.Count-1; i>=0; i--)
+                    writer.AddLine($"{lst[i].Key},{lst[i].Value}");
+
+                writer.WriteToDisk();
+
+                MessageBox.Show("Successful !!!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch{
+                MessageBox.Show("ERROR !!!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
         }
     }
 }

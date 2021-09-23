@@ -6,24 +6,22 @@ namespace keyboardHeatMap.IO
 {
     public class FileWriter : IWriter
     {
-        private string path;
-        private List<string> lines;
+        private StreamWriter writer;
 
         public FileWriter(string path)
         {
-            this.path = path;
+            writer = new StreamWriter(path);
         }
 
         public void WriteToDisk()
-        {
-            var writer = new StreamWriter(path);
-            foreach (var line in lines)
-                writer.WriteLine(line);
+        {       
+            writer.Flush();
+            writer.Close();
         }
 
         public void AddLine(string line)
         {
-            lines.Add(line);
+            writer.WriteLine(line);
         }
     }
 }

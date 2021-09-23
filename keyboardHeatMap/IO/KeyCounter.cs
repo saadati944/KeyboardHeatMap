@@ -14,9 +14,10 @@ namespace keyboardHeatMap.IO
             totalClicks = 0;
             result = new();
             foreach (KeyCode x in Enum.GetValues<KeyCode>())
-                result.Add(x, 0);
+                if (!result.ContainsKey(x))
+                    result.Add(x, 0);
         }
-        
+
         public void CountKeyDown(KeyCode key)
         {
             totalClicks++;
@@ -32,5 +33,6 @@ namespace keyboardHeatMap.IO
         {
             return totalClicks;
         }
+
     }
 }
