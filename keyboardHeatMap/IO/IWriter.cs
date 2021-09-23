@@ -3,6 +3,6 @@ namespace keyboardHeatMap.IO
     public interface IWriter
     {
         void WriteToDisk();
-        void AddRow(string line);
+        void AddLine(string line);
     }
 }
