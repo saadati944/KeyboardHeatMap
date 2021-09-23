@@ -7,17 +7,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using keyboardHeatMap.Capture;
 
 namespace keyboardHeatMap
 {
     public partial class FrmMain : Form
     {
         private bool allowFormClosing = false;
+        private IKeyboardCapture keyboardCapture;
         public bool Hidden { get; set; }
         public FrmMain()
         {
             InitializeComponent();
             notifyIcon.Visible = true;
+            keyboardCapture.Start();
         }
 
         private void ActivateForm()
@@ -51,7 +54,7 @@ namespace keyboardHeatMap
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO: stop capturing
+            keyboardCapture.Stop();
             AllowFormClosing();
             this.Close();
         }
