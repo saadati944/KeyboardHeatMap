@@ -9,6 +9,6 @@ namespace keyboardHeatMap.Capture
         bool IsCapturing { get; }
         void Start();
         void Stop();
-        IKeyCounter Results();
+        IKeyCounter Counter();
     }
 }

@@ -33,7 +33,7 @@ namespace keyboardHeatMap.Capture
             keyboard = null;
         }
 
-        public IKeyCounter Results()
+        public IKeyCounter Counter()
         {
             return counter;
         }
