@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -16,14 +17,13 @@ namespace keyboardHeatMap
     public partial class FrmMain : Form
     {
         private bool allowFormClosing = false;
-        private bool capturing => keyboardCapture.IsCapturing;
-        private IKeyboardCapture keyboardCapture;
+        private IKHCore core;
         public bool Hidden { get; set; }
         public FrmMain()
         {
             InitializeComponent();
             notifyIcon.Visible = true;
-            keyboardCapture = new KeyboardCapture();
+            core = new Core();
         }
 
         private void ActivateForm()
@@ -59,6 +59,7 @@ namespace keyboardHeatMap
         {
             AllowFormClosing();
             this.Close();
+            Process.GetCurrentProcess().Kill();
         }
 
         private void notifyIcon_DoubleClick(object sender, EventArgs e)
@@ -70,7 +71,7 @@ namespace keyboardHeatMap
         {
             if (allowFormClosing)
             {
-                if(capturing)
+                if(core.IsCapturing())
                     btnCapture_Click(null, null);
                 return;
             }
@@ -87,13 +88,13 @@ namespace keyboardHeatMap
 
         private void btnCapture_Click(object sender, EventArgs e)
         {
-            if (!capturing)
+            if (!core.IsCapturing())
             {
                 lblStatus.Text = "Capturing ...";
                 btnCapture.Text = "Stop";
                 btnSaveToFile.Enabled = false;
                 grdResults.Rows.Clear();
-                keyboardCapture.Start();
+                core.StartCapture();
             }
             else
             {
@@ -101,10 +102,11 @@ namespace keyboardHeatMap
                 btnCapture.Text = "Start";
                 btnSaveToFile.Enabled = true;
                 SuspendLayout();
-                grdResults.Rows.Add("TotalClicks", keyboardCapture.Results().TotalClicks());
-                foreach (var res in keyboardCapture.Results().Results())
+                grdResults.Rows.Add("TotalClicks", core.TotalClicks());
+                foreach (var res in core.Results())
                     grdResults.Rows.Add(res.Key, res.Value);
                 grdResults.Sort(grdResults.Columns[1], ListSortDirection.Descending);
+                core.StopCapture();
                 ResumeLayout();
             }
         }
@@ -115,19 +117,13 @@ namespace keyboardHeatMap
             {
                 if(saveFileDialog.ShowDialog() != DialogResult.OK)
                     return;
-                IWriter writer = new FileWriter(saveFileDialog.FileName);
-
-                writer.AddLine("Key,Count");
-                writer.AddLine($"TotalClicks,{keyboardCapture.Results().TotalClicks()}");
-
-                var result = keyboardCapture.Results().Results();
-                List<KeyValuePair<KeyCode, int>> lst = result.ToList();
-                lst.Sort((a, b) => a.Value.CompareTo(b.Value));
-
-                for(int i=lst.Count-1; i>=0; i--)
-                    writer.AddLine($"{lst[i].Key},{lst[i].Value}");
-
-                writer.WriteToDisk();
+                SaveFormat format;
+                string ext = System.IO.Path.GetExtension(saveFileDialog.FileName)?.ToLower();
+                format = SaveFormat.TXT;
+                if (ext == ".csv")
+                    format = SaveFormat.CSV;
+                
+                core.SaveToFile(saveFileDialog.FileName, format, true, false);
 
                 MessageBox.Show("Successful !!!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

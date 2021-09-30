@@ -72,7 +72,7 @@
             // 
             // btnCapture
             // 
-            this.btnCapture.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCapture.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCapture.Location = new System.Drawing.Point(514, 419);
             this.btnCapture.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCapture.Name = "btnCapture";
@@ -114,6 +114,7 @@
             // 
             // btnSaveToFile
             // 
+            this.btnSaveToFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveToFile.Enabled = false;
             this.btnSaveToFile.Location = new System.Drawing.Point(420, 419);
             this.btnSaveToFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -126,6 +127,8 @@
             // 
             // lblStatus
             // 
+            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblStatus.Location = new System.Drawing.Point(14, 419);
             this.lblStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblStatus.Name = "lblStatus";
@@ -134,7 +137,7 @@
             // 
             // saveFileDialog
             // 
-            this.saveFileDialog.Filter = "CSV files|*.csv";
+            this.saveFileDialog.Filter = "CSV files|*.csv|Text files|*.txt";
             // 
             // FrmMain
             // 
