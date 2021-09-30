@@ -2,7 +2,8 @@ namespace keyboardHeatMap.IO
 {
     public interface IWriter
     {
-        void WriteToDisk();
+        void Flush();
         void AddLine(string line);
+        void Close();
     }
 }

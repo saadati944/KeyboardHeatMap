@@ -83,7 +83,7 @@ namespace keyboardHeatMap
         private void FrmMain_Load(object sender, EventArgs e)
         {
             notifyIcon.BalloonTipText = "Keyboard Heatmap is running ...";
-            notifyIcon.ShowBalloonTip(300);
+            notifyIcon.ShowBalloonTip(100);
         }
 
         private void btnCapture_Click(object sender, EventArgs e)
@@ -123,7 +123,7 @@ namespace keyboardHeatMap
                 if (ext == ".csv")
                     format = SaveFormat.CSV;
                 
-                core.SaveToFile(saveFileDialog.FileName, format, true, false);
+                core.Save(saveFileDialog.FileName, format, true, false);
 
                 MessageBox.Show("Successful !!!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -132,5 +132,6 @@ namespace keyboardHeatMap
             }
             
         }
+        
     }
 }

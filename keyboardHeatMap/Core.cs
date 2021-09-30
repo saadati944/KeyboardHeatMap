@@ -1,6 +1,7 @@
 ﻿using keyboardHeatMap.Capture;
 using keyboardHeatMap.IO;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace keyboardHeatMap
         TXT,
         CSV
     }
-    public interface IKHCore
+    public interface IKHCore : IDisposable
     {
         void StartCapture();
         bool IsCapturing();
@@ -22,20 +23,34 @@ namespace keyboardHeatMap
         int KeyCount(KeyCode key);
         int TotalClicks();
         Dictionary<KeyCode, int> Results();
-        void SaveToFile(string path, SaveFormat format, bool totalClicks, bool zeros = false);
+        void Save(string path, SaveFormat format, bool totalClicks, bool zeros = false);
     }
     public class Core : IKHCore
     {
         private IKeyboardCapture keyboardCapture;
+        private IWriter tempWriter;
+        private const string tempDirectory = "results";
+        private readonly string tempPathPrefix = tempDirectory + Path.DirectorySeparatorChar + "result_";
 
         public Core()
         {
             keyboardCapture = new KeyboardCapture();
         }
 
+        ~Core()
+        {
+            Destruct();
+        }
+
+        private void Destruct()
+        {
+            if (IsCapturing()) StopCapture();
+        }
+
         public void StartCapture()
         {
             keyboardCapture.Start();
+            CreateTempWriter();
         }
         public bool IsCapturing()
         {
@@ -44,6 +59,9 @@ namespace keyboardHeatMap
         public void StopCapture()
         {
             keyboardCapture.Stop();
+            SaveCSV(tempWriter, keyboardCapture.Counter(), true, true);
+            tempWriter.Close();
+            tempWriter = null;
         }
         public int KeyCount(KeyCode key)
         {
@@ -58,7 +76,7 @@ namespace keyboardHeatMap
             return keyboardCapture.Counter().Results();
         }
 
-        public void SaveToFile(string path, SaveFormat format, bool totalClicks, bool zeros = false)
+        public void Save(string path, SaveFormat format, bool totalClicks, bool zeros = false)
         {
             IWriter writer = new FileWriter(path);
             switch (format)
@@ -70,6 +88,7 @@ namespace keyboardHeatMap
                     SaveCSV(writer, keyboardCapture.Counter(), totalClicks, zeros);
                     break;
             }
+            writer.Close();
         }
         private void SaveCSV(IWriter writer, IKeyCounter counter, bool totalClicks, bool zeros)
         {
@@ -90,7 +109,7 @@ namespace keyboardHeatMap
                 writer.AddLine($"{x.Key},{x.Value}");
             }
 
-            writer.WriteToDisk();
+            writer.Flush();
         }
         private void SaveTXT(IWriter writer, IKeyCounter counter, bool totalClicks, bool zeros)
         {
@@ -111,7 +130,29 @@ namespace keyboardHeatMap
                 writer.AddLine($"{x.Key}\t:\t{x.Value}");
             }
 
-            writer.WriteToDisk();
+            writer.Flush();
+        }
+
+        private void CreateTempWriter()
+        {
+            if(tempWriter is not null) tempWriter.Close();
+
+            if (!Directory.Exists(tempDirectory))
+                Directory.CreateDirectory(tempDirectory);
+            int num = 0;
+            string path;
+            do
+            {
+                path = $"{tempPathPrefix}{num}.csv";
+                num++;
+            } while (File.Exists(path));
+            
+            tempWriter = new FileWriter(path);
+        }
+
+        public void Dispose()
+        {
+            Destruct();
         }
     }
 }

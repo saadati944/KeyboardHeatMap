@@ -13,7 +13,7 @@ namespace keyboardHeatMap.IO
             writer = new StreamWriter(path);
         }
 
-        public void WriteToDisk()
+        public void Flush()
         {       
             writer.Flush();
             writer.Close();
@@ -22,6 +22,11 @@ namespace keyboardHeatMap.IO
         public void AddLine(string line)
         {
             writer.WriteLine(line);
+        }
+
+        public void Close()
+        {
+            writer.Close();
         }
     }
 }
