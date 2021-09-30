@@ -24,6 +24,7 @@ namespace keyboardHeatMap
         int TotalClicks();
         Dictionary<KeyCode, int> Results();
         void Save(string path, SaveFormat format, bool totalClicks, bool zeros = false);
+        void CreateHtml(string csvResultFile, string output);
     }
     public class Core : IKHCore
     {
@@ -149,6 +150,30 @@ namespace keyboardHeatMap
             
             tempWriter = new FileWriter(path);
         }
+
+        public void CreateHtml(string csvResultFile, string output)
+        {
+            int counter = -1;
+            IWriter writer = new FileWriter(output);
+            writer.AddLine(HtmlLayout.Prefix);
+            foreach(string line in File.ReadAllLines(csvResultFile))
+            {
+                counter++;
+                if(counter <= 1)
+                    continue;
+                string[] res = line.Split(',');
+                if(counter == 2)
+                {
+                    writer.AddLine($"let maxCount = {res[1]};");
+                    writer.AddLine("let KeysCount = {");
+                }
+                writer.AddLine($"'{res[0]}': {res[1]},");
+            }
+            writer.AddLine("}");
+            writer.AddLine(HtmlLayout.Suffix);
+            writer.Close();
+        }
+        
 
         public void Dispose()
         {

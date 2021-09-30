@@ -41,6 +41,7 @@
             this.btnSaveToFile = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.btnCreateHtml = new System.Windows.Forms.Button();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdResults)).BeginInit();
             this.SuspendLayout();
@@ -73,7 +74,7 @@
             // btnCapture
             // 
             this.btnCapture.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCapture.Location = new System.Drawing.Point(514, 419);
+            this.btnCapture.Location = new System.Drawing.Point(532, 419);
             this.btnCapture.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCapture.Name = "btnCapture";
             this.btnCapture.Size = new System.Drawing.Size(88, 27);
@@ -97,7 +98,7 @@
             this.grdResults.Location = new System.Drawing.Point(14, 14);
             this.grdResults.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.grdResults.Name = "grdResults";
-            this.grdResults.Size = new System.Drawing.Size(588, 398);
+            this.grdResults.Size = new System.Drawing.Size(606, 398);
             this.grdResults.TabIndex = 3;
             // 
             // keyCode
@@ -116,7 +117,7 @@
             // 
             this.btnSaveToFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveToFile.Enabled = false;
-            this.btnSaveToFile.Location = new System.Drawing.Point(420, 419);
+            this.btnSaveToFile.Location = new System.Drawing.Point(438, 419);
             this.btnSaveToFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSaveToFile.Name = "btnSaveToFile";
             this.btnSaveToFile.Size = new System.Drawing.Size(88, 27);
@@ -132,25 +133,38 @@
             this.lblStatus.Location = new System.Drawing.Point(14, 419);
             this.lblStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(399, 27);
+            this.lblStatus.Size = new System.Drawing.Size(320, 27);
             this.lblStatus.TabIndex = 5;
             // 
             // saveFileDialog
             // 
             this.saveFileDialog.Filter = "CSV files|*.csv|Text files|*.txt";
             // 
+            // btnCreateHtml
+            // 
+            this.btnCreateHtml.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreateHtml.Location = new System.Drawing.Point(342, 419);
+            this.btnCreateHtml.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnCreateHtml.Name = "btnCreateHtml";
+            this.btnCreateHtml.Size = new System.Drawing.Size(88, 27);
+            this.btnCreateHtml.TabIndex = 6;
+            this.btnCreateHtml.Text = "Create HTML";
+            this.btnCreateHtml.UseVisualStyleBackColor = true;
+            this.btnCreateHtml.Click += new System.EventHandler(this.btnCreateHtml_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(616, 459);
+            this.ClientSize = new System.Drawing.Size(634, 459);
+            this.Controls.Add(this.btnCreateHtml);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.btnSaveToFile);
             this.Controls.Add(this.grdResults);
             this.Controls.Add(this.btnCapture);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MinimumSize = new System.Drawing.Size(632, 498);
+            this.MinimumSize = new System.Drawing.Size(650, 498);
             this.Name = "FrmMain";
             this.Text = "KeyboardHeatmap";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMain_FormClosing);
@@ -179,5 +193,7 @@
         private System.Windows.Forms.NotifyIcon notifyIcon;
 
         #endregion
+
+        private System.Windows.Forms.Button btnCreateHtml;
     }
 }

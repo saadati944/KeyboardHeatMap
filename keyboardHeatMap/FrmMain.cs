@@ -32,7 +32,7 @@ namespace keyboardHeatMap
             if (this.WindowState == FormWindowState.Minimized) this.WindowState = FormWindowState.Normal;
             this.Activate();
         }
-        
+
         private void ShowForm()
         {
             Hidden = false;
@@ -49,7 +49,7 @@ namespace keyboardHeatMap
         {
             allowFormClosing = true;
         }
-        
+
         private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             ActivateForm();
@@ -71,7 +71,7 @@ namespace keyboardHeatMap
         {
             if (allowFormClosing)
             {
-                if(core.IsCapturing())
+                if (core.IsCapturing())
                     btnCapture_Click(null, null);
                 return;
             }
@@ -115,23 +115,42 @@ namespace keyboardHeatMap
         {
             try
             {
-                if(saveFileDialog.ShowDialog() != DialogResult.OK)
+                if (saveFileDialog.ShowDialog() != DialogResult.OK)
                     return;
                 SaveFormat format;
                 string ext = System.IO.Path.GetExtension(saveFileDialog.FileName)?.ToLower();
                 format = SaveFormat.TXT;
                 if (ext == ".csv")
                     format = SaveFormat.CSV;
-                
+
                 core.Save(saveFileDialog.FileName, format, true, false);
 
                 MessageBox.Show("Successful !!!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch{
+            catch
+            {
                 MessageBox.Show("ERROR !!!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
         }
-        
+
+        private void btnCreateHtml_Click(object sender, EventArgs e)
+        {
+            string filter = saveFileDialog.Filter;
+            OpenFileDialog op = new OpenFileDialog();
+            op.Filter = "csv files|*.csv";
+            saveFileDialog.Filter = "html files|*.html";
+            if (op.ShowDialog() == DialogResult.OK && saveFileDialog.ShowDialog() == DialogResult.OK)
+                try
+                {
+                    core.CreateHtml(op.FileName, saveFileDialog.FileName);
+                    MessageBox.Show("Successful !!!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch
+                {
+                    MessageBox.Show("ERROR !!!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            saveFileDialog.Filter = filter;
+        }
     }
 }
